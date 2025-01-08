@@ -13,6 +13,13 @@
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin=""
     />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script src="leafletMaps.js"></script>
+    ;
     <style>
       #scrolly-container {
         position: relative;
@@ -28,7 +35,7 @@
         flex: 1;
       }
 
-      .sticky-object {
+      #sticky-image {
         position: -webkit-sticky;
         position: sticky;
         width: 100%;
@@ -41,9 +48,11 @@
         align-items: center;
         justify-content: center;
         overflow: hidden;
+
+        display: none; /* hide by default, let meta data decide when to display */
       }
 
-      .sticky-object img {
+      #sticky-image img {
         padding: 0rem;
         object-fit: cover;
         width: 100%;
@@ -51,6 +60,15 @@
         overflow: hidden;
 
         transition: transform 1s ease-in;
+      }
+
+      #sticky-map {
+        position: -webkit-sticky;
+        position: sticky;
+        width: 100%;
+        top: 12.5vh;
+        height: 75vh;
+        display: none; /* hide by default, let meta data decide when to display */
       }
 
       article {
@@ -102,7 +120,7 @@
             class="step"
             data-step="1"
             data-sticky-type="image"
-            data-sticky-object="Lovejoy.jpg"
+            data-sticky-image="Lovejoy.jpg"
           >
             <p>This is Lovejoy Library</p>
           </div>
@@ -116,40 +134,80 @@
               It was built in 1066 by the Normans as an impenetrable fortress.
             </p>
           </div>
-          <div class="step" data-step="3">
+          <div
+            class="step"
+            data-step="3"
+            data-sticky-type="map"
+            data-lat="38.7940"
+            data-long="-89.9979"
+            data-zoom="19"
+          >
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
+              Located within the heart of the SIUE campus, it has been conquered
+              by department fiefs living off scraps of the written word
             </p>
           </div>
-          <div class="step" data-step="4">
+          <div
+            class="step"
+            data-step="4"
+            data-sticky-type="map"
+            data-lat="38.8078"
+            data-long="-89.9636"
+            data-zoom="12"
+          >
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
-              eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut
-              enim ad minim veniam, quis nostrud exercitation ullamco laboris
-              nisi ut aliquip ex ea commodo consequat.
+              SIUE is located in Edwardsville, Illinois, ESE of world-renown
+              South Roxana IL
             </p>
+          </div>
+          <div
+            class="step"
+            data-step="5"
+            data-sticky-type="map"
+            data-lat="38.9"
+            data-long="-90.18"
+            data-zoom="13"
+          >
+            <p>It is also 30 miles from Alton IL</p>
+          </div>
+          <div
+            class="step"
+            data-step="6"
+            data-sticky-type="image"
+            data-sticky-image="ElijahLovejoy.jpg"
+          >
+            <p>
+              Alton was the home of Elijah P. Lovejoy, the library's namesake
+            </p>
+          </div>
+          <div
+            class="step"
+            data-step="7"
+            data-sticky-type="image"
+            data-sticky-image="LovejoyMob.jpg"
+          >
+            <p>He was killed by an angry Pro-Slavery Mob</p>
           </div>
         </article>
 
-        <div class="sticky-object">
-          <img src="Lovejoy.jpg" alt="Lovejoy Library" />
-        </div>
+        <!-- Each kind of sticky thing has it's own container to show/hide when it is part of a step-->
+        <div id="sticky-image"></div>
+        <div id="sticky-map"></div>
       </section>
 
-      <section id="outro"></section>
+      <section id="outro">
+        <p>Bummer.</p>
+      </section>
     </main>
 
     <!-- <div class='debug'></div> -->
     <script src="https://unpkg.com/intersection-observer@0.5.1/intersection-observer.js"></script>
     <script src="https://unpkg.com/scrollama"></script>
     <script>
-      // using d3 for convenience
       var main = document.querySelector("main");
       var scrolly = main.querySelector("#scrolly-container");
-      var stickyObject = scrolly.querySelector(".sticky-object");
+      var stickyImage = scrolly.querySelector("#sticky-image");
+      var stickyMap = scrolly.querySelector("#sticky-map");
       var story = scrolly.querySelector("article");
       var steps = story.querySelectorAll(".step");
 
@@ -160,23 +218,27 @@
       function handleStepEnter(response) {
         var el = response.element;
 
-        // remove is-active from all steps
-        // then add is-active to this step
+        // Set active step state to is-active and all othe steps not active
         steps.forEach((step) => step.classList.remove("is-active"));
         el.classList.add("is-active");
 
+        // Swap out image or map based on meta data
         if (el.dataset.stickyType === "image") {
-          console.log("stickyObject", el.dataset.stickyObject);
-          if (el.dataset.stickyObject) {
-            stickyObject.innerHTML = `<img src="${el.dataset.stickyObject}" alt="TODO" />`;
+          if (el.dataset.stickyImage) {
+            stickyImage.innerHTML = `<img src="${el.dataset.stickyImage}" alt="TODO" />`;
+            stickyImage.style.display = "block"; // TODO Move to CSS, create an active/inactive class
+            stickyMap.style.display = "none";
           }
-        }
-
-        if (el.dataset.zoom) {
-          let img = stickyObject.querySelector("img");
-          img.style.transform = `scale(${el.dataset.zoom})`;
-
-          //stickyObject.style.transform = `scale(${el.dataset.zoom})`;
+          if (el.dataset.zoom) {
+            let img = stickyImage.querySelector("img");
+            if (img) {
+              img.style.transform = `scale(${el.dataset.zoom})`;
+            }
+          }
+        } else if (el.dataset.stickyType === "map") {
+          stickyImage.style.display = "none"; // TODO Move to CSS, create an active/inactive class
+          stickyMap.style.display = "block";
+          displayStickyMap(el.dataset.lat, el.dataset.long, el.dataset.zoom);
         }
       }
 
@@ -187,7 +249,7 @@
           .setup({
             step: "#scrolly-container article .step",
             offset: 0.7, // what % from the top of the viewport the step should be considered "entered"
-            debug: true,
+            debug: false,
           })
           .onStepEnter(handleStepEnter);
 
