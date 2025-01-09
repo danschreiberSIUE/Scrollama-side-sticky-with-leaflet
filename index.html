@@ -142,7 +142,7 @@
         // Swap out image or map based on meta data
         if (dataset.stickyType === "image") {
           if (dataset.stickyImage) {
-            stickyImage.innerHTML = `<img src="${dataset.stickyImage}" alt="TODO" />`;
+            stickyImage.innerHTML = `<img src="${dataset.stickyImage}" alt="Image Alt Text" />`;
             stickyImage.style.display = "block"; // TODO Move to CSS, create an active/inactive class
             stickyMap.style.display = "none";
           }
