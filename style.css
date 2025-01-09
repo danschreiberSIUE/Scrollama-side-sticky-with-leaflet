@@ -1,5 +1,5 @@
-/* This file is for CSS of the surrounding page, 
-  it doesn't have anything to do with the scrollama elements within the page */
+/* This file contains the CSS of the page elements not related to scrollytelling */
+
 * {
   box-sizing: border-box;
 }

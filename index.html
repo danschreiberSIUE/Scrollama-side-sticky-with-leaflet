@@ -3,10 +3,12 @@
   <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <title>Lovejoy Library</title>
+    <title>Scrollytelling Example with Images and Maps</title>
     <meta name="description" content="Scrollama: Sticky Side Example" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="scrolly.css" />
+
     <link
       rel="stylesheet"
       href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -20,91 +22,6 @@
     ></script>
     <script src="leafletMaps.js"></script>
     ;
-    <style>
-      #scrolly-container {
-        position: relative;
-        display: -webkit-box;
-        display: -ms-flexbox;
-        display: flex;
-        padding: 1rem;
-      }
-
-      #scrolly-container > * {
-        -webkit-box-flex: 1;
-        -ms-flex: 1;
-        flex: 1;
-      }
-
-      #sticky-image {
-        position: -webkit-sticky;
-        position: sticky;
-        width: 100%;
-        margin: 0;
-        z-index: 0;
-        top: 12.5vh;
-        height: 75vh;
-        /* Center everything inside */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        overflow: hidden;
-
-        display: none; /* hide by default, let meta data decide when to display */
-      }
-
-      #sticky-image img {
-        padding: 0rem;
-        object-fit: cover;
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-
-        transition: transform 1s ease-in;
-      }
-
-      #sticky-map {
-        position: -webkit-sticky;
-        position: sticky;
-        width: 100%;
-        top: 12.5vh;
-        height: 75vh;
-        display: none; /* hide by default, let meta data decide when to display */
-      }
-
-      article {
-        position: relative;
-
-        padding: 0 0rem;
-        max-width: 20rem;
-      }
-
-      .step {
-        margin: 0rem 1rem 10rem 0rem;
-        color: #fff;
-        height: 50vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      .step:first-child {
-        margin-top: 5rem;
-      }
-      .step:last-child {
-        margin-bottom: 0;
-      }
-
-      .step.is-active {
-        background-color: #0001;
-        color: #3b3b3b;
-      }
-
-      .step p {
-        text-align: center;
-        padding: 1rem;
-        font-size: 1.5rem;
-      }
-    </style>
   </head>
 
   <body>
@@ -120,7 +37,7 @@
             class="step"
             data-step="1"
             data-sticky-type="image"
-            data-sticky-image="Lovejoy.jpg"
+            data-sticky-image="media/Lovejoy.jpg"
           >
             <p>This is Lovejoy Library</p>
           </div>
@@ -130,9 +47,7 @@
             data-sticky-type="image"
             data-zoom="1.5"
           >
-            <p>
-              It was built in 1066 by the Normans as an impenetrable fortress.
-            </p>
+            <p>It has a lot of books</p>
           </div>
           <div
             class="step"
@@ -142,10 +57,7 @@
             data-long="-89.9979"
             data-zoom="19"
           >
-            <p>
-              Located within the heart of the SIUE campus, it has been conquered
-              by department fiefs living off scraps of the written word
-            </p>
+            <p>It is located in the heart of SIU's Edwardsville campus</p>
           </div>
           <div
             class="step"
@@ -156,8 +68,8 @@
             data-zoom="12"
           >
             <p>
-              SIUE is located in Edwardsville, Illinois, ESE of world-renown
-              South Roxana IL
+              Edwardsville, Illinois is the county seat of Madison, nestled
+              between the Mississippi River, I-55 and I-270 County
             </p>
           </div>
           <div
@@ -168,23 +80,24 @@
             data-long="-90.18"
             data-zoom="13"
           >
-            <p>It is also 30 miles from Alton IL</p>
+            <p>
+              It is 30 miles from Alton IL, the historic home of Elijah P.
+              Lovejoy, the library's namesake
+            </p>
           </div>
           <div
             class="step"
             data-step="6"
             data-sticky-type="image"
-            data-sticky-image="ElijahLovejoy.jpg"
+            data-sticky-image="media/ElijahLovejoy.jpg"
           >
-            <p>
-              Alton was the home of Elijah P. Lovejoy, the library's namesake
-            </p>
+            <p>Lovejoy was an ardent abolitionist newspaper editor</p>
           </div>
           <div
             class="step"
             data-step="7"
             data-sticky-type="image"
-            data-sticky-image="LovejoyMob.jpg"
+            data-sticky-image="media/LovejoyMob.jpg"
           >
             <p>He was killed by an angry Pro-Slavery Mob</p>
           </div>
@@ -222,27 +135,29 @@
         steps.forEach((step) => step.classList.remove("is-active"));
         el.classList.add("is-active");
 
+        replaceStepContent(el.dataset);
+      }
+
+      function replaceStepContent(dataset) {
         // Swap out image or map based on meta data
-        if (el.dataset.stickyType === "image") {
-          if (el.dataset.stickyImage) {
-            stickyImage.innerHTML = `<img src="${el.dataset.stickyImage}" alt="TODO" />`;
+        if (dataset.stickyType === "image") {
+          if (dataset.stickyImage) {
+            stickyImage.innerHTML = `<img src="${dataset.stickyImage}" alt="TODO" />`;
             stickyImage.style.display = "block"; // TODO Move to CSS, create an active/inactive class
             stickyMap.style.display = "none";
           }
-          if (el.dataset.zoom) {
+          if (dataset.zoom) {
             let img = stickyImage.querySelector("img");
             if (img) {
-              img.style.transform = `scale(${el.dataset.zoom})`;
+              img.style.transform = `scale(${dataset.zoom})`;
             }
           }
-        } else if (el.dataset.stickyType === "map") {
+        } else if (dataset.stickyType === "map") {
           stickyImage.style.display = "none"; // TODO Move to CSS, create an active/inactive class
           stickyMap.style.display = "block";
-          displayStickyMap(el.dataset.lat, el.dataset.long, el.dataset.zoom);
+          displayStickyMap(dataset.lat, dataset.long, dataset.zoom);
         }
       }
-
-      function replaceStepContent(stepData) {}
 
       function init() {
         scroller

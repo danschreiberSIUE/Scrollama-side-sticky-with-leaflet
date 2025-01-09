@@ -10,7 +10,7 @@ function displayStickyMap(lat, long, zoom) {
 
 function moveStickyMapLocation(lat, long, zoom) {
   const options = {
-    duration: 0.5, // Duration of the animation in seconds
+    duration: 1.5, // Duration of the animation in seconds
     easeLinearity: 0.1, // How "smooth" the flyTo animation is
     noMoveStart: false, // Whether to trigger movestart event
   };
